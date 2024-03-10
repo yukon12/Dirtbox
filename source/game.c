@@ -1,11 +1,10 @@
 #include <game.h>
-#include <stdbool.h>
-#include <assert.h>
-#include <SDL2/SDL.h>
+#include <stdio.h>
 
-bool running;
-SDL_Window* window;
-SDL_Renderer* renderer;
+static bool running;
+static float deltaTime;
+static SDL_Window* window;
+static SDL_Renderer* renderer;
 
 void run()
 {
@@ -21,16 +20,23 @@ void load()
     assert(window!=NULL);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     assert(window!=NULL);
+    loadCamera();
+    loadMap(renderer);
 }
 
 void loop()
 {
     running = true;
+    unsigned int time = SDL_GetTicks();
     while(running)
     {
         input();
         update();
-        render();
+        draw();
+        if(SDL_GetTicks()-time<16) SDL_Delay(16-SDL_GetTicks()+time);
+        deltaTime = ((float)(SDL_GetTicks()-time))/1000.0f;
+        time = SDL_GetTicks();
+        printf("%f\n", deltaTime);
     }
 }
 
@@ -38,6 +44,10 @@ void input()
 {
     const unsigned char* keyboardState = SDL_GetKeyboardState(NULL);
     if(keyboardState[SDL_SCANCODE_ESCAPE]) running = false;
+    if(keyboardState[SDL_SCANCODE_A]) shiftCamera(deltaTime*48.0f, 0.0f);
+    if(keyboardState[SDL_SCANCODE_D]) shiftCamera(-deltaTime*48.0f, 0.0f);
+    if(keyboardState[SDL_SCANCODE_W]) shiftCamera(0.0f, deltaTime*48.0f);
+    if(keyboardState[SDL_SCANCODE_S]) shiftCamera(0.0f, -deltaTime*48.0f);
 }
 
 void update()
@@ -49,10 +59,11 @@ void update()
     }
 }
 
-void render()
+void draw()
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
+    drawMap(renderer);
     SDL_RenderPresent(renderer);
 }
 
