@@ -1,12 +1,12 @@
-#include <camera.h>
+#include "../include/camera.h"
 
 SDL_FPoint* camera;
 
 void loadCamera()
 {
     camera = (SDL_FPoint*)malloc(sizeof(SDL_FPoint));
-    camera->x = 1280.0f/2.0f;
-    camera->y = 720.0f/2.0f;
+    camera->x = 0.0f;
+    camera->y = 0.0f;
 }
 
 float getCameraX()

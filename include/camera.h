@@ -1,5 +1,6 @@
 #ifndef CAMERA
 #define CAMERA
+
 #include <SDL2/SDL.h>
 
 void loadCamera();
