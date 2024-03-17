@@ -2,10 +2,13 @@
 #define CAMERA
 
 #include <SDL2/SDL.h>
+#include "header.h"
 
-void loadCamera();
+void loadCamera(SDL_Renderer* gameRenderer, SDL_Texture** gameTexture);
 float getCameraX();
 float getCameraY();
-void shiftCamera(float x, float y);
+void setCameraX(float a);
+void setCameraY(float a);
+void renderTexture(int textureID, float x, float y);
 
 #endif

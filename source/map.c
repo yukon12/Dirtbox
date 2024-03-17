@@ -1,8 +1,11 @@
 #include "../include/map.h"
+
 #include <stdio.h>
 
-static unsigned char** tile;
-static unsigned char** object;
+void addOctave(float** noise, int m);
+
+unsigned char** tile;
+unsigned char** object;
 
 void loadMap(SDL_Renderer* renderer)
 {
@@ -30,7 +33,7 @@ void loadMap(SDL_Renderer* renderer)
     }
 }
 
-static void addOctave(float** noise, int m)
+void addOctave(float** noise, int m)
 {
     float** octave = generateNoise(MAP_SIZE, m);
     for(int r = 0; r < MAP_SIZE; r++)
@@ -44,21 +47,16 @@ static void addOctave(float** noise, int m)
 
 void drawMap()
 {
-    int c0 = (getCameraX()/UNIT);
-    int c1 = c0+(WINDOW_WIDTH/UNIT)+1;
-    int r0 = (getCameraY()/UNIT);
-    int r1 = r0+(WINDOW_HEIGHT/UNIT)+1;
+    int c0 = floor(getCameraX());
+    int r0 = floor(getCameraY());
 
-    if(c0<0) c0 = 0;
-    if(c1>=MAP_SIZE) c1 = MAP_SIZE-1;
-    if(r0<0) r0 = 0;
-    if(r1>MAP_SIZE) r1 = MAP_SIZE-1;
-
-    for(int r = r0; r <= r1; r++)
+    for(int j = 0; j < 16; j++)
     {
-        for(int c = c0; c <= c1; c++)
+        for(int i = 0; i < 28; i++)
         {
-            drawTexture(c*UNIT, r*UNIT, tile[c][r]);
+            int c = (c0+i)%MAP_SIZE;
+            int r = (r0+j)%MAP_SIZE;
+            renderTexture(tile[c][r], (float)c, (float)r);
         }
     }
 }
