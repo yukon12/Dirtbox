@@ -1,7 +1,4 @@
 #include "../include/map.h"
-
-#include <stdio.h>
-
 void addOctave(float** noise, int m);
 
 unsigned char** tile;

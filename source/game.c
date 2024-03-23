@@ -1,7 +1,5 @@
 #include "../include/game.h"
 
-#include <stdio.h>
-
 static void load();
 static void loop();
 static void input();
@@ -26,6 +24,8 @@ void load()
     srand(time(NULL));
 
     assert(SDL_Init(SDL_INIT_EVERYTHING)==0);
+    assert(IMG_Init(IMG_INIT_PNG)!=0);
+    assert(TTF_Init()==0);
 
     window = SDL_CreateWindow("Dirtbox", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     assert(window!=NULL);
@@ -38,9 +38,12 @@ void load()
     texture[1] = IMG_LoadTexture(renderer, "../assets/grass_tile.png");
     texture[2] = IMG_LoadTexture(renderer, "../assets/player.png");
 
+    TTF_Font* font = TTF_OpenFont("../assets/silkscreen.ttf", 24);
+
     loadCamera(renderer, texture);
     loadPlayer();
     loadMap(renderer);
+    loadInterface(renderer, font);
 }
 
 void loop()
@@ -83,6 +86,7 @@ void render()
     SDL_RenderClear(renderer);
     drawMap();
     renderPlayer();
+    renderCoordinates(getPlayerX(), getPlayerY());
     SDL_RenderPresent(renderer);
 }
 
