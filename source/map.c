@@ -1,4 +1,5 @@
 #include "../include/map.h"
+#include <SDL2/SDL_timer.h>
 void addOctave(float** noise, int m);
 
 unsigned char** tile;
@@ -46,6 +47,7 @@ void drawMap()
 {
     int c0 = floor(getCameraX());
     int r0 = floor(getCameraY());
+    unsigned char frame = (SDL_GetTicks()/500)%2;
 
     for(int j = 0; j < 16; j++)
     {
@@ -53,17 +55,21 @@ void drawMap()
         {
             int c = (c0+i)%MAP_SIZE;
             int r = (r0+j)%MAP_SIZE;
-            renderTexture(tile[c][r], (float)c, (float)r);
+            renderTexture(2*tile[c][r]+frame, (float)c, (float)r);
         }
     }
 }
 
 unsigned char getTile(int c, int r)
 {
+    c = (c+MAP_SIZE)%MAP_SIZE;
+    r = (r+MAP_SIZE)%MAP_SIZE;
     return tile[c][r];
 }
 
 unsigned char getObject(int c, int r)
 {
+    c = (c+MAP_SIZE)%MAP_SIZE;
+    r = (r+MAP_SIZE)%MAP_SIZE;
     return object[c][r];
 }

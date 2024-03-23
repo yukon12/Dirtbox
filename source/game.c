@@ -33,10 +33,17 @@ void load()
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     assert(window!=NULL);
 
-    SDL_Texture** texture = (SDL_Texture**)malloc(2*sizeof(SDL_Texture*));
-    texture[0] = IMG_LoadTexture(renderer, "../assets/water_tile.png");
-    texture[1] = IMG_LoadTexture(renderer, "../assets/grass_tile.png");
-    texture[2] = IMG_LoadTexture(renderer, "../assets/player.png");
+    SDL_Texture** texture = (SDL_Texture**)malloc(10*sizeof(SDL_Texture*));
+    texture[0] = IMG_LoadTexture(renderer, "../assets/water_tile_1.png");
+    texture[1] = IMG_LoadTexture(renderer, "../assets/water_tile_2.png");
+    texture[2] = IMG_LoadTexture(renderer, "../assets/grass_tile_1.png");
+    texture[3] = IMG_LoadTexture(renderer, "../assets/grass_tile_2.png");
+    texture[4] = IMG_LoadTexture(renderer, "../assets/player_idle.png");
+    //texture[5]
+    texture[6] = IMG_LoadTexture(renderer, "../assets/player_left_1.png");
+    texture[7] = IMG_LoadTexture(renderer, "../assets/player_left_2.png");
+    texture[8] = IMG_LoadTexture(renderer, "../assets/player_right_1.png");
+    texture[9] = IMG_LoadTexture(renderer, "../assets/player_right_2.png");
 
     TTF_Font* font = TTF_OpenFont("../assets/silkscreen.ttf", 24);
 
@@ -44,6 +51,8 @@ void load()
     loadPlayer();
     loadMap(renderer);
     loadInterface(renderer, font);
+
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 }
 
 void loop()
@@ -63,12 +72,13 @@ void loop()
 
 void input()
 {
+    resetOrientation();
     const unsigned char* keyboardState = SDL_GetKeyboardState(NULL);
     if(keyboardState[SDL_SCANCODE_ESCAPE]) running = false;
-    if(keyboardState[SDL_SCANCODE_A]) movePlayerX(-1.0f*deltaTime*PLAYER_SPEED);
-    if(keyboardState[SDL_SCANCODE_D]) movePlayerX(1.0f*deltaTime*PLAYER_SPEED);
-    if(keyboardState[SDL_SCANCODE_W]) movePlayerY(-1.0f*deltaTime*PLAYER_SPEED);
-    if(keyboardState[SDL_SCANCODE_S]) movePlayerY(1.0f*deltaTime*PLAYER_SPEED);
+    if(keyboardState[SDL_SCANCODE_A]) playerGoLeft(deltaTime);
+    if(keyboardState[SDL_SCANCODE_D]) playerGoRight(deltaTime);
+    if(keyboardState[SDL_SCANCODE_W]) playerGoUp(deltaTime);
+    if(keyboardState[SDL_SCANCODE_S]) playerGoDown(deltaTime);
 }
 
 void update()
@@ -87,6 +97,7 @@ void render()
     drawMap();
     renderPlayer();
     renderCoordinates(getPlayerX(), getPlayerY());
+    renderMinimap(getPlayerX(), getPlayerY());
     SDL_RenderPresent(renderer);
 }
 
