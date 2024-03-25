@@ -1,5 +1,4 @@
 #include "../include/map.h"
-#include <SDL2/SDL_timer.h>
 void addOctave(float** noise, int m);
 
 unsigned char** tile;
@@ -29,6 +28,16 @@ void loadMap(SDL_Renderer* renderer)
             if(noise[c][r]>=0.0f) tile[c][r] = GRASS;
         }
     }
+
+    int v = 0;
+    for(int r = 0; r < MAP_SIZE; r++)
+    {
+        for(int c = 0; c < MAP_SIZE; c++)
+        {
+            v = rand()%64;
+            if(tile[c][r]&&v<3) object[c][r] = v+1;
+        }
+    }
 }
 
 void addOctave(float** noise, int m)
@@ -56,6 +65,7 @@ void drawMap()
             int c = (c0+i)%MAP_SIZE;
             int r = (r0+j)%MAP_SIZE;
             renderTexture(2*tile[c][r]+frame, (float)c, (float)r);
+            if(object[c][r]!=0) renderTexture(OBJECT+object[c][r]-1, (float)c, (float)r);
         }
     }
 }

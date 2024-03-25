@@ -1,4 +1,5 @@
 #include "../include/game.h"
+#include <SDL2/SDL_image.h>
 
 static void load();
 static void loop();
@@ -33,17 +34,20 @@ void load()
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     assert(window!=NULL);
 
-    SDL_Texture** texture = (SDL_Texture**)malloc(10*sizeof(SDL_Texture*));
-    texture[0] = IMG_LoadTexture(renderer, "../assets/water_tile_1.png");
-    texture[1] = IMG_LoadTexture(renderer, "../assets/water_tile_2.png");
-    texture[2] = IMG_LoadTexture(renderer, "../assets/grass_tile_1.png");
-    texture[3] = IMG_LoadTexture(renderer, "../assets/grass_tile_2.png");
-    texture[4] = IMG_LoadTexture(renderer, "../assets/player_idle.png");
+    SDL_Texture** texture = (SDL_Texture**)malloc(13*sizeof(SDL_Texture*));
+    texture[0] = IMG_LoadTexture(renderer, FILE_WATER_TILE_1);
+    texture[1] = IMG_LoadTexture(renderer, FILE_WATER_TILE_2);
+    texture[2] = IMG_LoadTexture(renderer, FILE_GRASS_TILE_1);
+    texture[3] = IMG_LoadTexture(renderer, FILE_GRASS_TILE_2);
+    texture[4] = IMG_LoadTexture(renderer, FILE_PLAYER_IDLE);
     //texture[5]
-    texture[6] = IMG_LoadTexture(renderer, "../assets/player_left_1.png");
-    texture[7] = IMG_LoadTexture(renderer, "../assets/player_left_2.png");
-    texture[8] = IMG_LoadTexture(renderer, "../assets/player_right_1.png");
-    texture[9] = IMG_LoadTexture(renderer, "../assets/player_right_2.png");
+    texture[6] = IMG_LoadTexture(renderer, FILE_PLAYER_LEFT_1);
+    texture[7] = IMG_LoadTexture(renderer, FILE_PLAYER_LEFT_2);
+    texture[8] = IMG_LoadTexture(renderer, FILE_PLAYER_RIGHT_1);
+    texture[9] = IMG_LoadTexture(renderer, FILE_PLAYER_RIGHT_2);
+    texture[10] = IMG_LoadTexture(renderer, FILE_LOG);
+    texture[11] = IMG_LoadTexture(renderer, FILE_STONE);
+    texture[12] = IMG_LoadTexture(renderer, FILE_WEED);
 
     TTF_Font* font = TTF_OpenFont("../assets/silkscreen.ttf", 24);
 

@@ -9,6 +9,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include "header.h"
+#include "files.h"
 #include "map.h"
 #include "perlin.h"
 #include "camera.h"
