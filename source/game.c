@@ -1,5 +1,5 @@
 #include "../include/game.h"
-#include <SDL2/SDL_image.h>
+#include <stdio.h>
 
 static void load();
 static void loop();
@@ -34,24 +34,11 @@ void load()
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     assert(window!=NULL);
 
-    SDL_Texture** texture = (SDL_Texture**)malloc(13*sizeof(SDL_Texture*));
-    texture[0] = IMG_LoadTexture(renderer, FILE_WATER_TILE_1);
-    texture[1] = IMG_LoadTexture(renderer, FILE_WATER_TILE_2);
-    texture[2] = IMG_LoadTexture(renderer, FILE_GRASS_TILE_1);
-    texture[3] = IMG_LoadTexture(renderer, FILE_GRASS_TILE_2);
-    texture[4] = IMG_LoadTexture(renderer, FILE_PLAYER_IDLE);
-    //texture[5]
-    texture[6] = IMG_LoadTexture(renderer, FILE_PLAYER_LEFT_1);
-    texture[7] = IMG_LoadTexture(renderer, FILE_PLAYER_LEFT_2);
-    texture[8] = IMG_LoadTexture(renderer, FILE_PLAYER_RIGHT_1);
-    texture[9] = IMG_LoadTexture(renderer, FILE_PLAYER_RIGHT_2);
-    texture[10] = IMG_LoadTexture(renderer, FILE_LOG);
-    texture[11] = IMG_LoadTexture(renderer, FILE_STONE);
-    texture[12] = IMG_LoadTexture(renderer, FILE_WEED);
+    SDL_Texture* spritesheet = IMG_LoadTexture(renderer, ASSETS_DIR"/spritesheet.png");
 
-    TTF_Font* font = TTF_OpenFont("../assets/silkscreen.ttf", 24);
+    TTF_Font* font = TTF_OpenFont(ASSETS_DIR"/silkscreen.ttf", 24);
 
-    loadCamera(renderer, texture);
+    loadCamera(renderer, spritesheet);
     loadPlayer();
     loadMap(renderer);
     loadInterface(renderer, font);
@@ -79,10 +66,10 @@ void input()
     resetOrientation();
     const unsigned char* keyboardState = SDL_GetKeyboardState(NULL);
     if(keyboardState[SDL_SCANCODE_ESCAPE]) running = false;
-    if(keyboardState[SDL_SCANCODE_A]) playerGoLeft(deltaTime);
-    if(keyboardState[SDL_SCANCODE_D]) playerGoRight(deltaTime);
     if(keyboardState[SDL_SCANCODE_W]) playerGoUp(deltaTime);
     if(keyboardState[SDL_SCANCODE_S]) playerGoDown(deltaTime);
+    if(keyboardState[SDL_SCANCODE_A]) playerGoLeft(deltaTime);
+    if(keyboardState[SDL_SCANCODE_D]) playerGoRight(deltaTime);
 }
 
 void update()
@@ -96,7 +83,7 @@ void update()
 
 void render()
 {
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     drawMap();
     renderPlayer();

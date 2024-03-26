@@ -1,8 +1,11 @@
 #include "../include/player.h"
+#include <SDL2/SDL_timer.h>
 
 #define IDLE 0
 #define LEFT 1
 #define RIGHT 2
+#define BACK 3
+#define FRONT 4
 
 static SDL_FPoint* player;
 static SDL_FPoint* offset;
@@ -77,6 +80,7 @@ void playerGoUp(float deltaTime)
     movePlayerY(-1.0f*deltaTime*PLAYER_SPEED);
     if(leftFoot()==0||rightFoot()==0) player->y = ceil(player->y);
     setCameraY(player->y-offset->y);
+    orientation = BACK;
 }
 
 void playerGoDown(float deltaTime)
@@ -84,6 +88,7 @@ void playerGoDown(float deltaTime)
     movePlayerY(1.0f*deltaTime*PLAYER_SPEED);
     if(leftFoot()==0||rightFoot()==0) player->y = floor(player->y);
     setCameraY(player->y-offset->y);
+    orientation = FRONT;
 }
 
 void movePlayerX(float a)
@@ -102,7 +107,20 @@ void movePlayerY(float a)
 
 void renderPlayer()
 {
-    unsigned char textureID = 4+2*orientation;
-    if(orientation) textureID += (SDL_GetTicks()/250)%2;
+    unsigned char textureID = TXT_PLAYER_IDLE;
+    if((SDL_GetTicks()/250)%2)
+    {
+        if(orientation==LEFT) textureID = TXT_PLAYER_LEFT_1;
+        else if(orientation==RIGHT) textureID = TXT_PLAYER_RIGHT_1;
+        else if(orientation==BACK) textureID = TXT_PLAYER_BACK_1;
+        else if(orientation==FRONT) textureID = TXT_PLAYER_FRONT_1;
+    }
+    else
+    {
+        if(orientation==LEFT) textureID = TXT_PLAYER_LEFT_2;
+        else if(orientation==RIGHT) textureID = TXT_PLAYER_RIGHT_2;
+        else if(orientation==BACK) textureID = TXT_PLAYER_BACK_2;
+        else if(orientation==FRONT) textureID = TXT_PLAYER_FRONT_2;
+    }
     renderTexture(textureID, player->x, player->y);
 }

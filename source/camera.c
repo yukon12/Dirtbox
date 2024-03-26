@@ -1,22 +1,24 @@
 #include "../include/camera.h"
 
-#include <stdio.h>
-
 static SDL_FPoint* camera;
 static SDL_Rect* destination;
+static SDL_Rect* source;
 static SDL_Renderer* renderer;
-static SDL_Texture** texture;
+static SDL_Texture* spritesheet;
 
-void loadCamera(SDL_Renderer* gameRenderer, SDL_Texture** gameTexture)
+void loadCamera(SDL_Renderer* gameRenderer, SDL_Texture* gameSpritesheet)
 {
     camera = (SDL_FPoint*)malloc(sizeof(SDL_FPoint));
     destination = (SDL_Rect*)malloc(sizeof(SDL_Rect));
+    source = (SDL_Rect*)malloc(sizeof(SDL_Rect));
     destination->w = UNIT_INT;
     destination->h = UNIT_INT;
+    source->w = 16;
+    source->h = 16;
     camera->x = 0.0f;
     camera->y = 0.0f;
     renderer = gameRenderer;
-    texture = gameTexture;
+    spritesheet = gameSpritesheet;
 }
 
 float getCameraX()
@@ -57,6 +59,10 @@ void renderTexture(int textureID, float x, float y)
     {
         destination->x = windowX;
         destination->y = windowY;
-        SDL_RenderCopy(renderer, texture[textureID], NULL, destination);
+
+        source->x = ((int)floor(((float)textureID)/4.0f))*16;
+        source->y = (textureID%4)*16;
+
+        SDL_RenderCopy(renderer, spritesheet, source, destination);
     }
 }

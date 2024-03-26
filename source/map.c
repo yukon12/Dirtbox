@@ -1,4 +1,5 @@
 #include "../include/map.h"
+
 void addOctave(float** noise, int m);
 
 unsigned char** tile;
@@ -52,6 +53,89 @@ void addOctave(float** noise, int m)
     }
 }
 
+void renderWater(int c, int r, int frame)
+{
+    if(tile[c][r]!=0) return;
+    if(!frame) renderTexture(TXT_WATER_1, c, r);
+    renderTexture(TXT_WATER_2, c, r);
+}
+
+void renderDirt(int c, int r, int frame)
+{
+    if(r>0&&tile[c][r-1]==1&&tile[c][r]==0) renderTexture(TXT_DIRT, c, r);
+}
+
+void renderGrass(int c, int r, int frame)
+{
+    if(tile[c][r]==1)
+    {
+        if(!frame)
+        {
+            renderTexture(TXT_GRASS_1, c, r);
+            return;
+        }
+        renderTexture(TXT_GRASS_2, c, r);
+        return;
+    }
+
+    if(c>0&&tile[c-1][r])
+    {
+        renderTexture(TXT_GRASS_RIGHT, c, r);
+    }
+
+    if(c<MAP_SIZE-1&&tile[c+1][r])
+    {
+        renderTexture(TXT_GRASS_LEFT, c, r);
+    }
+
+    if(r>0&&tile[c][r-1])
+    {
+        renderTexture(TXT_GRASS_BOTTOM, c, r);
+    }
+    
+    if(r<MAP_SIZE-1&&tile[c][r+1])
+    {
+        renderTexture(TXT_GRASS_TOP, c, r);
+    }
+
+    if(r>0&&c>0&&tile[c-1][r-1])
+    {
+        renderTexture(TXT_GRASS_BOTTOM_RIGHT, c, r);
+    }
+
+    if(r>0&&c<MAP_SIZE-1&&tile[c+1][r-1])
+    {
+        renderTexture(TXT_GRASS_BOTTOM_LEFT, c, r);
+    }
+}
+
+void renderTile(int c, int r, int frame)
+{
+    renderWater(c, r, frame);
+    renderDirt(c, r, frame);
+    renderGrass(c, r, frame);
+}
+
+void renderObject(int c, int r, int frame)
+{
+    if(object[c][r]==0) return;
+    if(object[c][r]==1) 
+    {
+        renderTexture(TXT_LOG, c, r);
+        return;
+    }
+    if(object[c][r]==2) 
+    {
+        renderTexture(TXT_STONE, c, r);
+        return;
+    }
+    if(object[c][r]==3) 
+    {
+        renderTexture(TXT_WEED, c, r);
+        return;
+    }
+}
+
 void drawMap()
 {
     int c0 = floor(getCameraX());
@@ -64,8 +148,8 @@ void drawMap()
         {
             int c = (c0+i)%MAP_SIZE;
             int r = (r0+j)%MAP_SIZE;
-            renderTexture(2*tile[c][r]+frame, (float)c, (float)r);
-            if(object[c][r]!=0) renderTexture(OBJECT+object[c][r]-1, (float)c, (float)r);
+            renderTile(c, r, frame);
+            if(object[c][r]!=0) renderObject(c, r, frame);
         }
     }
 }

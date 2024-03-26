@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include "header.h"
 
-void loadCamera(SDL_Renderer* gameRenderer, SDL_Texture** gameTexture);
+void loadCamera(SDL_Renderer* gameRenderer, SDL_Texture* gameSpritesheet);
 float getCameraX();
 float getCameraY();
 void setCameraX(float a);
