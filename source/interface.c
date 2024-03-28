@@ -1,5 +1,7 @@
 #include "../include/interface.h"
 #include <SDL2/SDL_render.h>
+#include <SDL2/SDL_ttf.h>
+#include <stdio.h>
 
 static TTF_Font* font;
 static SDL_Renderer* renderer;
@@ -8,6 +10,10 @@ static SDL_Texture* coordinateTexture;
 static SDL_Color* color;
 static char* text;
 static SDL_Rect* destination;
+static unsigned char* object;
+static unsigned char* amount;
+static SDL_Surface* objectAmountSurface;
+static SDL_Texture* objectAmountTexture;
 
 void loadInterface(SDL_Renderer* gameRenderer, TTF_Font* gameFont)
 { 
@@ -22,6 +28,8 @@ void loadInterface(SDL_Renderer* gameRenderer, TTF_Font* gameFont)
     destination->x = 0;
     destination->y = 0;
     text = (char*)malloc(12*sizeof(char));
+    object = (unsigned char*)calloc(5, sizeof(unsigned char));
+    amount = (unsigned char*)calloc(5, sizeof(unsigned char));
 }
 
 void renderCoordinates(float x, float y)
@@ -57,4 +65,63 @@ void renderMinimap(float x, float y)
         }
     }
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+}
+
+void addObject(unsigned char objectID)
+{
+    int firstWithObject = INT_MAX;
+    int firstEmpty = INT_MAX;
+    for(int i = 4; i >= 0; i--) 
+    {
+        if(object[i]==objectID&&amount[i]<255) firstWithObject = i;
+        if(object[i]==0) firstEmpty = i;
+    }
+
+    if(firstWithObject<5)
+    {
+        amount[firstWithObject]++;
+        return;
+    }
+
+    if(firstEmpty<5)
+    {
+        object[firstEmpty] = objectID;
+        amount[firstEmpty] = 1;
+        return;
+    }
+}
+
+void renderBar()
+{
+    SDL_Rect background;
+    background.x = 24;
+    background.y = 192;
+    background.w = 2*UNIT_INT;
+    background.h = 2*UNIT_INT;
+    SDL_Rect number;
+    number.x = 24+UNIT_INT;
+    number.y = 192+UNIT_INT;
+    number.w = UNIT_INT;
+    number.h = UNIT_INT;
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
+
+    for(int i = 0; i < 5; i++)
+    {
+        SDL_RenderFillRect(renderer, &background);
+        if(object[i]==1) renderTextureAbsolute(TXT_LOG, background.x, background.y);
+        if(object[i]==2) renderTextureAbsolute(TXT_STONE, background.x, background.y);
+        if(object[i]==3) renderTextureAbsolute(TXT_WEED, background.x, background.y);
+
+        if(object[i]!=0)
+        {
+            sprintf(text, "%d", amount[i]);
+            objectAmountSurface = TTF_RenderText_Solid(font, text, *color);
+            objectAmountTexture = SDL_CreateTextureFromSurface(renderer, objectAmountSurface);
+            number.y = background.y;
+            SDL_RenderCopy(renderer, objectAmountTexture, NULL, &number);
+        }
+
+        background.y += 100;
+    }
 }

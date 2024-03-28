@@ -154,6 +154,13 @@ void drawMap()
     }
 }
 
+void setObject(int c, int r, unsigned char objectID)
+{
+    c = (c+MAP_SIZE)%MAP_SIZE;
+    r = (r+MAP_SIZE)%MAP_SIZE;
+    object[c][r] = objectID;
+}
+
 unsigned char getTile(int c, int r)
 {
     c = (c+MAP_SIZE)%MAP_SIZE;

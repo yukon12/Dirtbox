@@ -1,4 +1,5 @@
 #include "../include/game.h"
+#include <SDL2/SDL_scancode.h>
 #include <stdio.h>
 
 static void load();
@@ -70,6 +71,13 @@ void input()
     if(keyboardState[SDL_SCANCODE_S]) playerGoDown(deltaTime);
     if(keyboardState[SDL_SCANCODE_A]) playerGoLeft(deltaTime);
     if(keyboardState[SDL_SCANCODE_D]) playerGoRight(deltaTime);
+    if(keyboardState[SDL_SCANCODE_E])
+    {
+        int c = floor(getPlayerX()+0.5f);
+        int r = floor(getPlayerY()+0.5f);
+        addObject(getObject(c, r));
+        setObject(c, r, 0);
+    }
 }
 
 void update()
@@ -89,6 +97,7 @@ void render()
     renderPlayer();
     renderCoordinates(getPlayerX(), getPlayerY());
     renderMinimap(getPlayerX(), getPlayerY());
+    renderBar();
     SDL_RenderPresent(renderer);
 }
 

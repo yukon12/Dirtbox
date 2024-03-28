@@ -10,5 +10,6 @@ float getCameraY();
 void setCameraX(float a);
 void setCameraY(float a);
 void renderTexture(int textureID, float x, float y);
+void renderTextureAbsolute(int textureID, int x, int y);
 
 #endif

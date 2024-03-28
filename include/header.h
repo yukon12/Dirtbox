@@ -11,7 +11,6 @@
 #define WATER 0
 #define GRASS 1
 #define PLAYER_SPEED 8.0f
-#define OBJECT 10
 
 #define TXT_DIRT 0
 #define TXT_GRASS_LEFT 1

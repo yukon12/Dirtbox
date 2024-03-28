@@ -66,3 +66,12 @@ void renderTexture(int textureID, float x, float y)
         SDL_RenderCopy(renderer, spritesheet, source, destination);
     }
 }
+
+void renderTextureAbsolute(int textureID, int x, int y)
+{
+    source->x = ((int)floor(((float)textureID)/4.0f))*16;
+    source->y = (textureID%4)*16;
+    destination->x = x;
+    destination->y = y;
+    SDL_RenderCopy(renderer, spritesheet, source, destination);
+}
