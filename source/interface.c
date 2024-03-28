@@ -14,6 +14,7 @@ static unsigned char* object;
 static unsigned char* amount;
 static SDL_Surface* objectAmountSurface;
 static SDL_Texture* objectAmountTexture;
+static int chosen;
 
 void loadInterface(SDL_Renderer* gameRenderer, TTF_Font* gameFont)
 { 
@@ -30,6 +31,7 @@ void loadInterface(SDL_Renderer* gameRenderer, TTF_Font* gameFont)
     text = (char*)malloc(12*sizeof(char));
     object = (unsigned char*)calloc(5, sizeof(unsigned char));
     amount = (unsigned char*)calloc(5, sizeof(unsigned char));
+    chosen = 0;
 }
 
 void renderCoordinates(float x, float y)
@@ -91,6 +93,22 @@ void addObject(unsigned char objectID)
     }
 }
 
+unsigned char popObject()
+{
+    unsigned char o = object[chosen];
+    if(o!=0)
+    {
+        amount[chosen]--;
+        if(amount[chosen]==0) object[chosen] = 0;
+    }
+    return o;
+}
+
+void setChosen(int i)
+{
+    chosen = i;
+}
+
 void renderBar()
 {
     SDL_Rect background;
@@ -108,6 +126,8 @@ void renderBar()
 
     for(int i = 0; i < 5; i++)
     {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
+        if(i==chosen) SDL_SetRenderDrawColor(renderer, 0, 0, 0, 192);
         SDL_RenderFillRect(renderer, &background);
         if(object[i]==1) renderTextureAbsolute(TXT_LOG, background.x, background.y);
         if(object[i]==2) renderTextureAbsolute(TXT_STONE, background.x, background.y);

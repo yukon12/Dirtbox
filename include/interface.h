@@ -11,6 +11,8 @@ void loadInterface(SDL_Renderer* gameRenderer, TTF_Font* gameFont);
 void renderCoordinates(float x, float y);
 void renderMinimap(float x, float y);
 void addObject(unsigned char objectID);
+unsigned char popObject();
+void setChosen(int i);
 void renderBar();
 
 #endif

@@ -78,6 +78,19 @@ void input()
         addObject(getObject(c, r));
         setObject(c, r, 0);
     }
+    if(keyboardState[SDL_SCANCODE_Q])
+    {
+        int c = floor(getPlayerX()+0.5f);
+        int r = floor(getPlayerY()+0.5f);
+        unsigned char o = popObject();
+        if(o!=0) addObject(getObject(c, r));
+        setObject(c, r, o);
+    }
+    if(keyboardState[SDL_SCANCODE_1]) setChosen(0);
+    if(keyboardState[SDL_SCANCODE_2]) setChosen(1);
+    if(keyboardState[SDL_SCANCODE_3]) setChosen(2);
+    if(keyboardState[SDL_SCANCODE_4]) setChosen(3);
+    if(keyboardState[SDL_SCANCODE_5]) setChosen(4);
 }
 
 void update()
