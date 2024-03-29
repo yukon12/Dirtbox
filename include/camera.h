@@ -4,12 +4,13 @@
 #include <SDL2/SDL.h>
 #include "header.h"
 
-void loadCamera(SDL_Renderer* gameRenderer, SDL_Texture* gameSpritesheet);
+void loadCamera(SDL_Renderer* _renderer, SDL_Texture* _spritesheet);
+void quitCamera();
 float getCameraX();
 float getCameraY();
-void setCameraX(float a);
-void setCameraY(float a);
-void renderTexture(int textureID, float x, float y);
-void renderTextureAbsolute(int textureID, int x, int y);
+void setCameraX(float _a);
+void setCameraY(float _a);
+void renderTextureOnTheMap(int _textureID, float _x, float _y);
+void renderTextureOnTheWindow(int _textureID, int _x, int _y);
 
 #endif

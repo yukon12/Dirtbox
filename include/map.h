@@ -9,7 +9,7 @@
 #include "camera.h"
 
 void loadMap(SDL_Renderer* renderer);
-void drawMap();
+void renderMap();
 unsigned char getTile(int c, int r);
 unsigned char getObject(int c, int r);
 void setObject(int c, int r, unsigned char objectID);

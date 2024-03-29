@@ -1,6 +1,4 @@
 #include "../include/game.h"
-#include <SDL2/SDL_scancode.h>
-#include <stdio.h>
 
 static void load();
 static void loop();
@@ -9,7 +7,7 @@ static void update();
 static void render();
 static void quit();
 
-static bool running;
+static unsigned char running;
 static float deltaTime;
 static SDL_Window* window;
 static SDL_Renderer* renderer;
@@ -35,11 +33,11 @@ void load()
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     assert(window!=NULL);
 
-    SDL_Texture* spritesheet = IMG_LoadTexture(renderer, ASSETS_DIR"/spritesheet.png");
+    SDL_Texture* spriteSheet = IMG_LoadTexture(renderer, ASSETS_DIR"/spritesheet.png");
 
     TTF_Font* font = TTF_OpenFont(ASSETS_DIR"/silkscreen.ttf", 24);
 
-    loadCamera(renderer, spritesheet);
+    loadCamera(renderer, spriteSheet);
     loadPlayer();
     loadMap(renderer);
     loadInterface(renderer, font);
@@ -49,7 +47,7 @@ void load()
 
 void loop()
 {
-    running = true;
+    running = 1;
     unsigned int time = SDL_GetTicks();
     while(running)
     {
@@ -66,7 +64,7 @@ void input()
 {
     resetOrientation();
     const unsigned char* keyboardState = SDL_GetKeyboardState(NULL);
-    if(keyboardState[SDL_SCANCODE_ESCAPE]) running = false;
+    if(keyboardState[SDL_SCANCODE_ESCAPE]) running = 0;
     if(keyboardState[SDL_SCANCODE_W]) playerGoUp(deltaTime);
     if(keyboardState[SDL_SCANCODE_S]) playerGoDown(deltaTime);
     if(keyboardState[SDL_SCANCODE_A]) playerGoLeft(deltaTime);
@@ -91,22 +89,24 @@ void input()
     if(keyboardState[SDL_SCANCODE_3]) setChosen(2);
     if(keyboardState[SDL_SCANCODE_4]) setChosen(3);
     if(keyboardState[SDL_SCANCODE_5]) setChosen(4);
+
+    SDL_Event event;
+    while(SDL_PollEvent(&event))
+    {
+        if(event.type==SDL_QUIT) running = 0;
+    }
 }
 
 void update()
 {
-    SDL_Event event;
-    while(SDL_PollEvent(&event))
-    {
-        if(event.type==SDL_QUIT) running = false;
-    }
+
 }
 
 void render()
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
-    drawMap();
+    renderMap();
     renderPlayer();
     renderCoordinates(getPlayerX(), getPlayerY());
     renderMinimap(getPlayerX(), getPlayerY());
@@ -116,6 +116,7 @@ void render()
 
 void quit()
 {
+    quitCamera();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

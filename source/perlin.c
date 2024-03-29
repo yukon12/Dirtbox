@@ -1,11 +1,15 @@
 #include "../include/perlin.h"
 
+static SDL_FPoint** generateGrid(int m);
+static float perlin(float x, float y, SDL_FPoint** grid, int m);
+static float interpolate(float a0, float a1, float w);
+
 float** generateNoise(int n, int m)
 {
     float** noise = (float**)malloc(n*sizeof(float*));
     for(int c = 0; c < n; c++) noise[c] = (float*)malloc(n*sizeof(float));
     
-    Vector** grid = generateGrid(m);
+    SDL_FPoint** grid = generateGrid(m);
     float fieldSize = ((float)n)/((float)m);
 
     for(int r = 0; r < n; r++)
@@ -21,10 +25,10 @@ float** generateNoise(int n, int m)
     return noise;
 }
 
-static Vector** generateGrid(int m)
+static SDL_FPoint** generateGrid(int m)
 {
-    Vector** grid = (Vector**)malloc(m*sizeof(float*));
-    for(int c = 0; c < m; c++) grid[c] = (Vector*)malloc(m*sizeof(Vector));
+    SDL_FPoint** grid = (SDL_FPoint**)malloc(m*sizeof(float*));
+    for(int c = 0; c < m; c++) grid[c] = (SDL_FPoint*)malloc(m*sizeof(SDL_FPoint));
 
     for(int r = 0; r < m; r++)
     {
@@ -40,7 +44,7 @@ static Vector** generateGrid(int m)
     return grid;
 }
 
-static float perlin(float x, float y, Vector** grid, int m)
+static float perlin(float x, float y, SDL_FPoint** grid, int m)
 {
     int x0 = (int)x;
     int x1 = (x0+1)%m;
@@ -61,8 +65,7 @@ static float perlin(float x, float y, Vector** grid, int m)
     return e;
 }
 
-// Copied from https://en.wikipedia.org/wiki/Perlin_noise.
 static float interpolate(float a0, float a1, float w)
 {
-    return (a1 - a0) * ((w * (w * 6.0 - 15.0) + 10.0) * w * w * w) + a0;
+    return (a1-a0)*((w*(w*6.0f-15.0f)+10.0f)*w*w*w)+a0;
 }

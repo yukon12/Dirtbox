@@ -7,3 +7,4 @@ Font used is [Silkscreen](https://fonts.google.com/specimen/Silkscreen).
 W, S, D, A - move.  
 E - pick up an item.  
 Q - drop an item.  
+1, 2, 3, 4, 5 - switch between slots on the bar.  

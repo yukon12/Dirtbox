@@ -1,5 +1,4 @@
 #include "../include/player.h"
-#include <SDL2/SDL_timer.h>
 
 #define IDLE 0
 #define LEFT 1
@@ -122,5 +121,5 @@ void renderPlayer()
         else if(orientation==BACK) textureID = TXT_PLAYER_BACK_2;
         else if(orientation==FRONT) textureID = TXT_PLAYER_FRONT_2;
     }
-    renderTexture(textureID, player->x, player->y);
+    renderTextureOnTheMap(textureID, player->x, player->y);
 }

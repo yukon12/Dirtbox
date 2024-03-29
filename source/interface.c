@@ -1,7 +1,4 @@
 #include "../include/interface.h"
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_ttf.h>
-#include <stdio.h>
 
 static TTF_Font* font;
 static SDL_Renderer* renderer;
@@ -114,13 +111,13 @@ void renderBar()
     SDL_Rect background;
     background.x = 24;
     background.y = 192;
-    background.w = 2*UNIT_INT;
-    background.h = 2*UNIT_INT;
+    background.w = 2*UNIT;
+    background.h = 2*UNIT;
     SDL_Rect number;
-    number.x = 24+UNIT_INT;
-    number.y = 192+UNIT_INT;
-    number.w = UNIT_INT;
-    number.h = UNIT_INT;
+    number.x = 24+UNIT;
+    number.y = 192+UNIT;
+    number.w = UNIT;
+    number.h = UNIT;
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
 
@@ -129,9 +126,9 @@ void renderBar()
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
         if(i==chosen) SDL_SetRenderDrawColor(renderer, 0, 0, 0, 192);
         SDL_RenderFillRect(renderer, &background);
-        if(object[i]==1) renderTextureAbsolute(TXT_LOG, background.x, background.y);
-        if(object[i]==2) renderTextureAbsolute(TXT_STONE, background.x, background.y);
-        if(object[i]==3) renderTextureAbsolute(TXT_WEED, background.x, background.y);
+        if(object[i]==1) renderTextureOnTheWindow(TXT_LOG, background.x, background.y);
+        if(object[i]==2) renderTextureOnTheWindow(TXT_STONE, background.x, background.y);
+        if(object[i]==3) renderTextureOnTheWindow(TXT_WEED, background.x, background.y);
 
         if(object[i]!=0)
         {

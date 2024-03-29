@@ -1,77 +1,90 @@
 #include "../include/camera.h"
+#include <SDL2/SDL_render.h>
 
-static SDL_FPoint* camera;
-static SDL_Rect* destination;
-static SDL_Rect* source;
 static SDL_Renderer* renderer;
-static SDL_Texture* spritesheet;
+static SDL_Texture* spriteSheet;
+static SDL_FPoint* cameraPosition;
+static SDL_Rect* source;
+static SDL_Rect* destination;
 
-void loadCamera(SDL_Renderer* gameRenderer, SDL_Texture* gameSpritesheet)
+void loadCamera(SDL_Renderer* _renderer, SDL_Texture* _spriteSheet)
 {
-    camera = (SDL_FPoint*)malloc(sizeof(SDL_FPoint));
+    renderer = _renderer;
+
+    spriteSheet = _spriteSheet;
+
+    cameraPosition = (SDL_FPoint*)malloc(sizeof(SDL_FPoint));
+    cameraPosition->x = 0.0f;
+    cameraPosition->y = 0.0f;
+
     destination = (SDL_Rect*)malloc(sizeof(SDL_Rect));
+    destination->x = 0;
+    destination->y = 0;
+    destination->w = UNIT;
+    destination->h = UNIT;
+
     source = (SDL_Rect*)malloc(sizeof(SDL_Rect));
-    destination->w = UNIT_INT;
-    destination->h = UNIT_INT;
+    source->x = 0;
+    source->y = 0;
     source->w = 16;
     source->h = 16;
-    camera->x = 0.0f;
-    camera->y = 0.0f;
-    renderer = gameRenderer;
-    spritesheet = gameSpritesheet;
+}
+
+void quitCamera()
+{
+    SDL_DestroyTexture(spriteSheet);
 }
 
 float getCameraX()
 {
-    return camera->x;
+    return cameraPosition->x;
 }
 
 float getCameraY()
 {
-    return camera->y;
+    return cameraPosition->y;
 }
 
-void setCameraX(float a)
+void setCameraX(float _a)
 {
-    camera->x = a;
-    while((camera->x)>((float)MAP_SIZE)) camera->x -= ((float)MAP_SIZE);
-    while((camera->x)<0.0f) camera->x += ((float)MAP_SIZE);
+    cameraPosition->x = _a;
+    while((cameraPosition->x)>((float)MAP_SIZE)) cameraPosition->x -= ((float)MAP_SIZE);
+    while((cameraPosition->x)<0.0f) cameraPosition->x += ((float)MAP_SIZE);
 }
 
-void setCameraY(float a)
+void setCameraY(float _a)
 {
-    camera->y = a;
-    while((camera->y)>((float)MAP_SIZE)) camera->y -= ((float)MAP_SIZE);
-    while((camera->y)<0.0f) camera->y += ((float)MAP_SIZE);
+    cameraPosition->y = _a;
+    while((cameraPosition->y)>((float)MAP_SIZE)) cameraPosition->y -= ((float)MAP_SIZE);
+    while((cameraPosition->y)<0.0f) cameraPosition->y += ((float)MAP_SIZE);
 }
 
-void renderTexture(int textureID, float x, float y)
+void renderTextureOnTheMap(int _textureID, float _x, float _y)
 {
-    const int mapPixelSize = UNIT_INT*MAP_SIZE;
-    float relativeX = x - camera->x;
-    float relativeY = y - camera->y;
-    int pixelX = round(relativeX*UNIT);
-    int pixelY = round(relativeY*UNIT);
-    int windowX = (pixelX+UNIT_INT+mapPixelSize)%mapPixelSize-UNIT_INT;
-    int windowY = (pixelY+UNIT_INT+mapPixelSize)%mapPixelSize-UNIT_INT;
+    float relativeX = _x - cameraPosition->x;
+    float relativeY = _y - cameraPosition->y;
+    int windowX = round(relativeX*UNIT_FLOAT);
+    int windowY = round(relativeY*UNIT_FLOAT);
+    windowX = (windowX+UNIT+MAP_WINDOW_SIZE)%MAP_WINDOW_SIZE-UNIT;
+    windowY = (windowY+UNIT+MAP_WINDOW_SIZE)%MAP_WINDOW_SIZE-UNIT;
 
-    if(windowX>=-UNIT_INT&&windowX<mapPixelSize&&windowY>=-UNIT_INT&&windowX<mapPixelSize)
+    if(windowX>=-UNIT&&windowX<WINDOW_WIDTH&&windowY>=-UNIT&&windowY<WINDOW_HEIGHT)
     {
+        source->x = ((int)floor(((float)_textureID)/4.0f))*16;
+        source->y = (_textureID%4)*16;
+
         destination->x = windowX;
         destination->y = windowY;
 
-        source->x = ((int)floor(((float)textureID)/4.0f))*16;
-        source->y = (textureID%4)*16;
-
-        SDL_RenderCopy(renderer, spritesheet, source, destination);
+        SDL_RenderCopy(renderer, spriteSheet, source, destination);
     }
 }
 
-void renderTextureAbsolute(int textureID, int x, int y)
+void renderTextureOnTheWindow(int _textureID, int _x, int _y)
 {
-    source->x = ((int)floor(((float)textureID)/4.0f))*16;
-    source->y = (textureID%4)*16;
-    destination->x = x;
-    destination->y = y;
-    SDL_RenderCopy(renderer, spritesheet, source, destination);
+    source->x = ((int)floor(((float)_textureID)/4.0f))*16;
+    source->y = (_textureID%4)*16;
+    destination->x = _x;
+    destination->y = _y;
+    SDL_RenderCopy(renderer, spriteSheet, source, destination);
 }

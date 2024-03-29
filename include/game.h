@@ -1,7 +1,6 @@
 #ifndef GAME
 #define GAME
 
-#include <stdbool.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <time.h>
