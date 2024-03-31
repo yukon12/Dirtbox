@@ -33,7 +33,26 @@ void load()
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     assert(window!=NULL);
 
-    SDL_Texture* spriteSheet = IMG_LoadTexture(renderer, ASSETS_DIR"/spritesheet.png");
+    SDL_Surface* surface = IMG_Load(ASSETS_DIR"/spritesheet.png");
+    SDL_Texture* spriteSheet = SDL_CreateTextureFromSurface(renderer, surface);
+
+    SDL_Rect* iconSource = (SDL_Rect*)malloc(sizeof(SDL_Rect));
+    iconSource->x = 3*16;
+    iconSource->y = 1*16;
+    iconSource->w = 16;
+    iconSource->h = 16;
+    SDL_Rect* iconDestination = (SDL_Rect*)malloc(sizeof(SDL_Rect));
+    iconDestination->x = 0;
+    iconDestination->y = 0;
+    iconDestination->w = 64;
+    iconDestination->h = 64;
+    SDL_Surface* icon = SDL_CreateRGBSurface(0, 64, 64, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+    SDL_BlitScaled(surface, iconSource, icon, iconDestination);
+    SDL_SetWindowIcon(window, icon);
+    SDL_FreeSurface(surface);
+    SDL_FreeSurface(icon);
+    free(iconSource);
+    free(iconDestination);
 
     TTF_Font* font = TTF_OpenFont(ASSETS_DIR"/silkscreen.ttf", 24);
 
@@ -43,6 +62,7 @@ void load()
     loadInterface(renderer, font);
 
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
 }
 
 void loop()
