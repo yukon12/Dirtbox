@@ -1,90 +1,138 @@
-#include "../include/camera.h"
-#include <SDL2/SDL_render.h>
+#include "camera.h"
 
-static SDL_Renderer* renderer;
-static SDL_Texture* spriteSheet;
-static SDL_FPoint* cameraPosition;
-static SDL_Rect* source;
-static SDL_Rect* destination;
+static int convertX(float _x, int _textureWidth);
+static int convertY(float _y, int _textureHeight);
 
-void loadCamera(SDL_Renderer* _renderer, SDL_Texture* _spriteSheet)
+static SDL_Renderer *renderer;
+static SDL_Texture *spriteSheetTexture;
+
+static float cameraX;
+static float cameraY;
+
+void loadCamera(SDL_Renderer *_renderer, SDL_Surface *_spriteSheetSurface)
 {
-    renderer = _renderer;
-
-    spriteSheet = _spriteSheet;
-
-    cameraPosition = (SDL_FPoint*)malloc(sizeof(SDL_FPoint));
-    cameraPosition->x = 0.0f;
-    cameraPosition->y = 0.0f;
-
-    destination = (SDL_Rect*)malloc(sizeof(SDL_Rect));
-    destination->x = 0;
-    destination->y = 0;
-    destination->w = UNIT;
-    destination->h = UNIT;
-
-    source = (SDL_Rect*)malloc(sizeof(SDL_Rect));
-    source->x = 0;
-    source->y = 0;
-    source->w = 16;
-    source->h = 16;
-}
-
-void quitCamera()
-{
-    SDL_DestroyTexture(spriteSheet);
+	renderer = _renderer;
+	spriteSheetTexture = SDL_CreateTextureFromSurface(renderer, _spriteSheetSurface);
+	
+	cameraX = 0;
+	cameraY = 0;
 }
 
 float getCameraX()
 {
-    return cameraPosition->x;
+	return cameraX;	
 }
 
 float getCameraY()
 {
-    return cameraPosition->y;
+	return cameraY;
 }
 
-void setCameraX(float _a)
+void setCameraX(float _x)
 {
-    cameraPosition->x = _a;
-    while((cameraPosition->x)>((float)MAP_SIZE)) cameraPosition->x -= ((float)MAP_SIZE);
-    while((cameraPosition->x)<0.0f) cameraPosition->x += ((float)MAP_SIZE);
+	cameraX = _x;	
 }
 
-void setCameraY(float _a)
+void setCameraY(float _y)
 {
-    cameraPosition->y = _a;
-    while((cameraPosition->y)>((float)MAP_SIZE)) cameraPosition->y -= ((float)MAP_SIZE);
-    while((cameraPosition->y)<0.0f) cameraPosition->y += ((float)MAP_SIZE);
+	cameraY = _y;
 }
 
-void renderTextureOnTheMap(int _textureID, float _x, float _y)
+/*
+void renderTextureOnTheWorld(SDL_Texture *_texture, SDL_Rect *_source, float _x, float _y)
 {
-    float relativeX = _x - cameraPosition->x;
-    float relativeY = _y - cameraPosition->y;
-    int windowX = round(relativeX*UNIT_FLOAT);
-    int windowY = round(relativeY*UNIT_FLOAT);
-    windowX = (windowX+UNIT+MAP_WINDOW_SIZE)%MAP_WINDOW_SIZE-UNIT;
-    windowY = (windowY+UNIT+MAP_WINDOW_SIZE)%MAP_WINDOW_SIZE-UNIT;
+	if(_texture == NULL)
+		_texture = spriteSheetTexture;
+	
+	int _textureWidth = 0;
+	int _textureHeight = 0;
+	SDL_QueryTexture(_texture, NULL, NULL, &_textureWidth, &_textureHeight);
 
-    if(windowX>=-UNIT&&windowX<WINDOW_WIDTH&&windowY>=-UNIT&&windowY<WINDOW_HEIGHT)
-    {
-        source->x = ((int)floor(((float)_textureID)/4.0f))*16;
-        source->y = (_textureID%4)*16;
+	int _windowX = convertX(_x, _textureWidth);
+	int _windowY = convertY(_y, _textureHeight);
+	
+	if(_source == NULL)
+	{
+		_source = (SDL_Rect *)malloc(sizeof(SDL_Rect));
+		_source->x = 0;
+		_source->y = 0;
+		_source->w = _textureWidth;
+		_source->h = _textureHeight;
+	}
+	
+	SDL_Rect *_destination = (SDL_Rect *)malloc(sizeof(SDL_Rect));
+	_destination->x = _windowX;
+	_destination->y = _windowY;
+	_destination->w = PIXEL_SIZE*_source->w;
+	_destination->h = PIXEL_SIZE*_source->h;
+	
+	SDL_RenderCopy(renderer, _texture, _source, _destination);
+}
+*/
 
-        destination->x = windowX;
-        destination->y = windowY;
-
-        SDL_RenderCopy(renderer, spriteSheet, source, destination);
-    }
+void renderTextureOnTheWorld(SDL_Texture *_texture, SDL_Rect *_source, float _x, float _y)
+{
+	if(_texture == NULL)
+		_texture = spriteSheetTexture;
+	
+	int _textureWidth = 0;
+	int _textureHeight = 0;
+	SDL_QueryTexture(_texture, NULL, NULL, &_textureWidth, &_textureHeight);
+	
+	int _windowX = convertX(_x, _textureWidth);
+	int _windowY = convertY(_y, _textureHeight);
+	
+	renderTextureOnTheWindow(_texture, _source, _windowX, _windowY, PIXEL_SIZE);
 }
 
-void renderTextureOnTheWindow(int _textureID, int _x, int _y)
+static int convertX(float _x, int _textureWidth)
 {
-    source->x = ((int)floor(((float)_textureID)/4.0f))*16;
-    source->y = (_textureID%4)*16;
-    destination->x = _x;
-    destination->y = _y;
-    SDL_RenderCopy(renderer, spriteSheet, source, destination);
+	// Issue.
+	/*
+	_x -= cameraX;
+	int _result = floor(((float)UNIT)*_x);
+	_result = (_result+(PIXEL_SIZE*_textureWidth)+WORLD_WINDOW_SIZE)%WORLD_WINDOW_SIZE-(PIXEL_SIZE*_textureWidth);
+	return _result;
+	*/
+	return (((int)(UNIT*(_x-cameraX)))+WORLD_WINDOW_SIZE+(PIXEL_SIZE*_textureWidth))%WORLD_WINDOW_SIZE-(PIXEL_SIZE*_textureWidth);
+}
+
+static int convertY(float _y, int _textureHeight)
+{
+	// Issue.
+	/*
+	_y -= cameraY;
+	int _result = floor(((float)UNIT)*_y);
+	_result = (_result+(PIXEL_SIZE*_textureHeight)+WORLD_WINDOW_SIZE)%WORLD_WINDOW_SIZE-(PIXEL_SIZE*_textureHeight);
+	return _result;
+	*/
+	return (((int)(UNIT*(_y-cameraY)))+WORLD_WINDOW_SIZE+(PIXEL_SIZE*_textureHeight))%WORLD_WINDOW_SIZE-(PIXEL_SIZE*_textureHeight);
+}
+
+// Extract common part of both functions to another function.
+void renderTextureOnTheWindow(SDL_Texture *_texture, SDL_Rect *_source, int _x, int _y, float _scale)
+{
+	if(_texture == NULL)
+		_texture = spriteSheetTexture;
+	
+	int _textureWidth = 0;
+	int _textureHeight = 0;
+	SDL_QueryTexture(_texture, NULL, NULL, &_textureWidth, &_textureHeight);
+	
+	if(_source == NULL)
+	{
+		_source = (SDL_Rect *)malloc(sizeof(SDL_Rect));
+		_source->x = 0;
+		_source->y = 0;
+		_source->w = _textureWidth;
+		_source->h = _textureHeight;
+	}
+	
+	SDL_Rect *_destination = (SDL_Rect *)malloc(sizeof(SDL_Rect));
+	_destination->x = _x;
+	_destination->y = _y;
+	_destination->w = round(_scale*_source->w);
+	_destination->h = round(_scale*_source->h);
+	
+	SDL_RenderCopy(renderer, _texture, _source, _destination);
 }
