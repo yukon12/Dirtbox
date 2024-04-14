@@ -42,8 +42,9 @@ static void load()
 	
 	loadWorld(renderer, spriteSheetSurface, quad);
 	loadCamera(renderer, spriteSheetSurface);
-	loadPlayer(quad);
+	loadPlayer(quad, font);
 	loadMap(renderer, font);
+	loadInventory(renderer, font, quad);
 	
 	assert(_sdlInit==0);
 	assert(_imgInit==IMG_INIT_PNG);
@@ -92,6 +93,20 @@ static void input()
 		movePlayer(DIR_LEFT);
 	if(_keyboardState[SDL_SCANCODE_D])
 		movePlayer(DIR_RIGHT);
+	if(_keyboardState[SDL_SCANCODE_E])
+		pickUpObject(floor(getPlayerX()+0.5f), floor(getPlayerY()+0.5f));
+	if(_keyboardState[SDL_SCANCODE_Q])
+		dropObject(floor(getPlayerX()+0.5f), floor(getPlayerY()+0.5f));
+	if(_keyboardState[SDL_SCANCODE_1])
+		chooseSlot(0);
+	if(_keyboardState[SDL_SCANCODE_2])
+		chooseSlot(1);
+	if(_keyboardState[SDL_SCANCODE_3])
+		chooseSlot(2);
+	if(_keyboardState[SDL_SCANCODE_4])
+		chooseSlot(3);
+	if(_keyboardState[SDL_SCANCODE_5])
+		chooseSlot(4);
 }
 
 static void update()
@@ -112,6 +127,7 @@ static void render()
 	renderWorld();
 	renderPlayer();
 	renderMap();
+	renderInventory();
 	
 	SDL_RenderPresent(renderer);
 }

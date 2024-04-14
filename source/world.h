@@ -12,6 +12,7 @@ void updateWorldFragmentTextures(float _x, float _y);
 void renderWorld();
 unsigned char getWorldTile(int _x, int _y);
 unsigned char getWorldObject(int _x, int _y);
+void setWorldObject(int _x, int _y, unsigned char _object);
 unsigned char isOnTheGround(float _x, float _y);
 
 #endif

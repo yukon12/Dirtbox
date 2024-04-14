@@ -3,6 +3,8 @@
 // To be moved to "header.h".
 #define FRAME_TIME 250
 
+static void renderInventory();
+
 static SDL_Rect **playerQuad;
 
 static float playerX;

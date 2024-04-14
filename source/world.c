@@ -340,6 +340,13 @@ unsigned char getWorldObject(int _x, int _y)
 	return objectMatrix[(_x+WORLD_SIZE)%WORLD_SIZE][(_y+WORLD_SIZE)%WORLD_SIZE];
 }
 
+void setWorldObject(int _x, int _y, unsigned char _object)
+{
+	_x = (_x+WORLD_SIZE)%WORLD_SIZE;
+	_y = (_y+WORLD_SIZE)%WORLD_SIZE;
+	objectMatrix[_x][_y] = _object;
+}
+
 unsigned char isOnTheGround(float _x, float _y)
 {
 	unsigned char _result = 0;

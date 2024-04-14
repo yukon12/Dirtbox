@@ -9,6 +9,7 @@
 #include "world.h"
 #include "player.h"
 #include "map.h"
+#include "inventory.h"
 
 void run();
 
